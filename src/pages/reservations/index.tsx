@@ -176,7 +176,6 @@ export function Reservations() {
                   <TableHead className="w-[64px]"></TableHead>
                   <TableHead className="w-[240px]">ID do pedido</TableHead>
                   <TableHead>Cliente</TableHead>
-                  <TableHead className="w-[140px]">Total do pedido</TableHead>
                   <TableHead className="w-[164px]"> Data reserva</TableHead>
                   <TableHead className="w-[132px]">Horario</TableHead>
                 </TableRow>

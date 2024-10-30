@@ -1,4 +1,4 @@
-import { Home, Pizza, UtensilsCrossed } from 'lucide-react'
+import { Cookie, Home, UtensilsCrossed } from 'lucide-react'
 
 import { NavLink } from './nav-link'
 import { ThemeToggle } from './theme/theme-toggle'
@@ -6,9 +6,9 @@ import { Separator } from './ui/separator'
 
 export function Header() {
   return (
-    <div className="border-b">
+    <div className="border-b border-orange-600">
       <div className="flex h-16 items-center gap-6 px-6">
-        <Pizza className="h-6 w-6" />
+        <Cookie className="h-8 w-8" />
 
         <Separator orientation="vertical" className="h-6" />
 

@@ -4,8 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { TableCell, TableRow } from '@/components/ui/table'
 
-import { OrderDetails } from './order-details'
-
 export interface OrderTableRowProps {
   order: {
     id: string
@@ -28,7 +26,6 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
               <span className="sr-only">Detalher do pedido</span>
             </Button>
           </DialogTrigger>
-          <OrderDetails />
         </Dialog>
       </TableCell>
       <TableCell>
@@ -37,7 +34,6 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         </div>
       </TableCell>
       <TableCell className="font-medium">{order.customerName}</TableCell>
-      <TableCell className="font-medium">R$ 149,90</TableCell>
       <TableCell className="font-medium text-muted-foreground">
         {order.reservationDate}
       </TableCell>

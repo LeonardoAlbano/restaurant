@@ -13,7 +13,8 @@ export interface MenuItem {
 }
 
 // Função para buscar os itens do menu
-export async function getMenu(): Promise<MenuItem[]> {
-  const response = await api.get<MenuItem[]>('/menu') // A API retorna um array direto
+export async function getMenu() {
+  const response = await api.get('/menu')
+
   return response.data
 }

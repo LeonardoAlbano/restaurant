@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
+import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -26,7 +27,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { OrderTableFilter } from './orders/order-table-filters'
 import { OrderTableRow } from './orders/order-table-row'
 
 const orderForm = z.object({
@@ -43,58 +43,56 @@ const orderForm = z.object({
 type OrderForm = z.infer<typeof orderForm>
 
 export function Reservations() {
+  const [open, setOpen] = useState(false)
   const [searchParams] = useSearchParams()
 
-  const pageIndex = z.coerce
-    .number()
-    .transform((page) => page - 1)
-    .parse(searchParams.get('page') ?? '1')
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = useForm<OrderForm>()
 
   const { mutateAsync: registerReservationFn } = useMutation({
     mutationFn: registerReservation,
+    onSuccess: () => {
+      toast.success('Reserva Realizada!')
+      refetch()
+      setOpen(false)
+      reset()
+    },
+    onError: () => {
+      toast.error('Erro ao registrar a reserva.')
+    },
+  })
+
+  const { data: result, refetch } = useQuery({
+    queryKey: ['orders', orderId, customerName],
+    queryFn: () =>
+      getReservation({
+        orderId,
+        customerName,
+      }),
   })
 
   async function handleOrder(data: OrderForm) {
-    console.log(data)
-    try {
-      await registerReservationFn({
-        customerName: data.customerName,
-        numPeople: data.numPeople,
-        reservationDate: data.reservationDate,
-        reservationTime: data.reservationTime,
-      })
-
-      toast.success('Reserva Realizada!')
-    } catch {
-      toast.error('Erro ao registrar a reserva.')
-    }
+    await registerReservationFn(data)
   }
-
-  const { data: result } = useQuery({
-    queryKey: ['orders'],
-    queryFn: () =>
-      getReservation({
-        pageIndex,
-      }),
-  })
 
   return (
     <>
       <Helmet title="Reservations" />
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 mx-12">
         <div className="flex">
           <h1 className="text-3xl font-bold tracking-tight">
             Reservas e pedidos
           </h1>
-          <div className=" ml-auto ">
-            <Dialog>
+          <div className="ml-auto">
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button size="lg">
                   <Plus className="h-8 w-8" /> Reserva mesa
@@ -105,7 +103,7 @@ export function Reservations() {
                 <DialogTitle className="text-2xl py-2">
                   Cadastro de mesas e pedidos
                 </DialogTitle>
-                <DialogDescription> escolhe sua reserva! </DialogDescription>
+                <DialogDescription>Escolha sua reserva!</DialogDescription>
                 <form
                   onSubmit={handleSubmit(handleOrder)}
                   className="space-y-7"
@@ -167,8 +165,6 @@ export function Reservations() {
           </div>
         </div>
         <div className="space-y-6">
-          <OrderTableFilter />
-
           <div className="border rounded-md">
             <Table>
               <TableHeader>
@@ -176,16 +172,14 @@ export function Reservations() {
                   <TableHead className="w-[64px]"></TableHead>
                   <TableHead className="w-[240px]">ID do pedido</TableHead>
                   <TableHead>Cliente</TableHead>
-                  <TableHead className="w-[164px]"> Data reserva</TableHead>
-                  <TableHead className="w-[132px]">Horario</TableHead>
+                  <TableHead className="w-[164px]">Data reserva</TableHead>
+                  <TableHead className="w-[132px]">Horário</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {result?.reservations?.map((reservation) => {
-                  return (
-                    <OrderTableRow key={reservation.id} order={reservation} />
-                  )
-                })}
+                {result?.reservations?.map((reservation) => (
+                  <OrderTableRow key={reservation.id} order={reservation} />
+                ))}
               </TableBody>
             </Table>
           </div>

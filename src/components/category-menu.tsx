@@ -13,23 +13,23 @@ const categoryMenuMap: Record<CategoryMenu, string> = {
 
 export function CategoryMenu({ category }: CategoryMenuProps) {
   return (
-    <div>
-      {category === 'entradas' && (
-        <span className="bg-blue-300 rounded-sm"></span>
-      )}
+    <div className="">
+      {category === 'entradas' && <span className="bg-blue-300 rounded-sm" />}
 
       {category === 'pratosPrincipais' && (
-        <span className="bg-green-300 rounded-sm"></span>
+        <span className="bg-green-300 rounded-sm" />
       )}
 
       {category === 'sobremesas' && (
-        <span className="bg-yellow-300 rounded-sm"></span>
+        <span className="bg-yellow-300 rounded-sm" />
       )}
 
-      {category === 'bebidas' && (
-        <span className="bg-red-300 rounded-sm"></span>
+      {category === 'bebidas' && <span className="bg-red-300 rounded-sm" />}
+
+      {['bebidas', 'sobremesas'].includes(category) && (
+        <span className="bg-orange-500" />
       )}
-      <span className="font-bold text-sm"> {categoryMenuMap[category]}</span>
+      <span className="font-bold text-sm"> {categoryMenuMap[category]} </span>
     </div>
   )
 }

@@ -1,4 +1,6 @@
-import { Search } from 'lucide-react'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { FileSliders } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
@@ -16,13 +18,16 @@ export interface OrderTableRowProps {
 }
 
 export function OrderTableRow({ order }: OrderTableRowProps) {
+  const formattedDate = format(new Date(order.reservationDate), 'dd/MM/yyyy', {
+    locale: ptBR,
+  })
   return (
     <TableRow>
       <TableCell>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size="xs">
-              <Search className="h-3 w-3" />
+              <FileSliders className="h-3 w-3" />
               <span className="sr-only">Detalher do pedido</span>
             </Button>
           </DialogTrigger>
@@ -35,7 +40,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
       </TableCell>
       <TableCell className="font-medium">{order.customerName}</TableCell>
       <TableCell className="font-medium text-muted-foreground">
-        {order.reservationDate}
+        {formattedDate}
       </TableCell>
       <TableCell className="font-medium">{order.reservationTime}</TableCell>
     </TableRow>

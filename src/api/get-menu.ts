@@ -1,6 +1,5 @@
 import { api } from '@/lib/axios'
 
-// Interface dos itens do menu
 export interface MenuItem {
   id: string
   name: string
@@ -8,11 +7,10 @@ export interface MenuItem {
   price: number
   category: {
     id: string
-    name: string
+    name: 'entradas' | 'pratosPrincipais' | 'sobremesas' | 'bebidas'
   }
 }
 
-// Função para buscar os itens do menu
 export async function getMenu() {
   const response = await api.get('/menu')
 

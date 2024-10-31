@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { toast } from 'sonner'
 
 import { getMenu, MenuItem } from '@/api/get-menu'
 import { Button } from '@/components/ui/button'
@@ -24,7 +25,7 @@ export function Menu() {
   })
 
   const [orderItems, setOrderItems] = useState<
-    { name: string; price: number; quantity: number }[]
+    { name: string; price: number; quantity: number; category: string }[]
   >([])
 
   const addItemToOrder = (item: MenuItem) => {
@@ -33,13 +34,23 @@ export function Menu() {
         (orderItem) => orderItem.name === item.name,
       )
       if (existingItem) {
+        toast.success(`Mais um ${item.name} adicionado!`)
         return prevItems.map((orderItem) =>
           orderItem.name === item.name
             ? { ...orderItem, quantity: orderItem.quantity + 1 }
             : orderItem,
         )
       }
-      return [...prevItems, { name: item.name, price: item.price, quantity: 1 }]
+      toast.success(`${item.name} adicionado ao pedido!`)
+      return [
+        ...prevItems,
+        {
+          name: item.name,
+          price: item.price,
+          quantity: 1,
+          category: item.category.name || 'Sem categoria',
+        },
+      ]
     })
   }
 
@@ -51,9 +62,11 @@ export function Menu() {
       if (!existingItem) return prevItems
 
       if (existingItem.quantity === 1) {
+        toast.error(`${item.name} removido do pedido!`)
         return prevItems.filter((orderItem) => orderItem.name !== item.name)
       }
 
+      toast.error(`Uma unidade de ${item.name} removida!`)
       return prevItems.map((orderItem) =>
         orderItem.name === item.name
           ? { ...orderItem, quantity: orderItem.quantity - 1 }
@@ -62,7 +75,6 @@ export function Menu() {
     })
   }
 
-  // Calcular o total de itens no carrinho
   const totalItemsInCart = orderItems.reduce(
     (total, item) => total + item.quantity,
     0,
@@ -82,7 +94,7 @@ export function Menu() {
                 <Button className="relative flex items-center">
                   <ShoppingCart />
                   {totalItemsInCart > 0 && (
-                    <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-sm font-bold text-white bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center w-7 h-7 text-lg font-bold text-white bg-orange-800 drop-shadow-md rounded-full transform translate-x-1/2 -translate-y-1/2">
                       {totalItemsInCart}
                     </span>
                   )}
@@ -124,7 +136,7 @@ export function Menu() {
               </CardHeader>
               <CardContent className="flex items-center justify-between">
                 <p className="text-lg">
-                  R${' '}
+                  R$
                   {menu.price.toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',

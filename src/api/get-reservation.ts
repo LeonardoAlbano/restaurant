@@ -2,6 +2,8 @@ import { api } from '@/lib/axios'
 
 export interface GetOrdersQuery {
   pageIndex?: number | null
+  orderId?: string | null
+  customerName?: string | null
 }
 
 interface GetReservationReponse {
@@ -13,17 +15,16 @@ interface GetReservationReponse {
     reservationTime: string
     createdAt: Date
   }[]
-  meta: {
-    pageIndex: number
-    perPage: number
-    totalCount: number
-  }
 }
 
-export async function getReservation({ pageIndex }: GetOrdersQuery) {
+export async function getReservation({
+  orderId,
+  customerName,
+}: GetOrdersQuery) {
   const response = await api.get<GetReservationReponse>('/reservations', {
     params: {
-      pageIndex,
+      orderId,
+      customerName,
     },
   })
 
